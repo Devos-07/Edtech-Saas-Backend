@@ -19,7 +19,7 @@ sequelize.authenticate()
 })
 
 //migrate garney/ push garney
-sequelize.sync({force:false})
+sequelize.sync({alter:false})
 .then(()=>{
   console.log('Migrated succsfully new changes!!')
 })

@@ -13,6 +13,8 @@ RESET PASSWORD/OTP
 */
 import {Request,Response} from 'express'
 import User from '../../database/models/userModel'
+import bcrypt from 'bcrypt'
+
 //json data ->req.body maa aauxa ->username ,email,password
 //files ->req.file maa aauxa ->file related data
 // const registerUser = async (req:Request,res:Response)=>{
@@ -41,6 +43,12 @@ import User from '../../database/models/userModel'
 
 class AuthController{
 static async registerUser(req:Request,res:Response){
+   if (req.body === undefined) {
+    res.status(400).json({
+      message : "No data was sent!!"
+    })
+    return
+  }
     const {username,password,email} = req.body
   //incoming data ->accept
   if (!username||!password||!email) {
@@ -52,10 +60,10 @@ static async registerUser(req:Request,res:Response){
     //insert into Users table
    await User.create({
       username : username,
-      password : password,
+      password :  bcrypt.hashSync(password,12),
       email : email
     })
-    res.status(200).json({
+    res.status(201).json({
       message : "User registered successfully."
     }) 
   }
