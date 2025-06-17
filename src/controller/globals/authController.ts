@@ -14,6 +14,7 @@ RESET PASSWORD/OTP
 import {Request,Response} from 'express'
 import User from '../../database/models/userModel'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 //json data ->req.body maa aauxa ->username ,email,password
 //files ->req.file maa aauxa ->file related data
@@ -68,11 +69,11 @@ static async registerUser(req:Request,res:Response){
     }) 
   }
 
-  async loginUser(req:Request,res:Response){
+  static async loginUser(req:Request,res:Response){
     const {email,password} = req.body
     if (!email||!password) {
       res.status(400).json({
-        message : "Please provide username, password"
+        message : "Please provide email, password"
       })
       return
     }
@@ -82,7 +83,7 @@ static async registerUser(req:Request,res:Response){
         email : email
       }
     })
-    if (data.length===null) {
+    if (data.length === 0) {
       res.status(404).json({
         message : "Not registered!"
       })
@@ -91,6 +92,15 @@ static async registerUser(req:Request,res:Response){
       //compare(plain pasword user bata aako,hashed password register huda users table maa baseko)
       const isPassMatch = bcrypt.compareSync(password,data[0].password)
       if (isPassMatch) { //login vayo, token generation
+        const token = jwt.sign({id : data[0].id},"this is secret",{
+          expiresIn :"30d"
+        })
+        res.status(200).json({
+          token : token,
+          message : "Logged in sucessfully!!"
+        })
+
+        
         
       } else{
         res.status(403).json({
