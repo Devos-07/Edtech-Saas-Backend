@@ -92,7 +92,7 @@ static async registerUser(req:Request,res:Response){
       //compare(plain pasword user bata aako,hashed password register huda users table maa baseko)
       const isPassMatch = bcrypt.compareSync(password,data[0].password)
       if (isPassMatch) { //login vayo, token generation
-        const token = jwt.sign({id : data[0].id},"this is secret",{
+        const token = jwt.sign({id : data[0].id},"thisissecret",{
           expiresIn :"30d"
         })
         res.status(200).json({
